@@ -1,0 +1,162 @@
+const rollDice1 = document.querySelector(".rollDice1");
+const rollDice2 = document.querySelector("#rollDice2");
+const hold = document.querySelector(".hold");
+const left = document.querySelector(".left");
+const right = document.querySelector(".right");
+
+// Images
+const img1 = document.querySelector(".one");
+const img2 = document.querySelector(".two");
+const img3 = document.querySelector(".three");
+const img4 = document.querySelector(".four");
+const img5 = document.querySelector(".five");
+const img6 = document.querySelector(".six");
+
+// Left score
+const leftTotalScore = document.querySelector(".tScore");
+const leftCurrentScore = document.querySelector(".cScore");
+
+// Right score
+const rightTotalScore = document.querySelector("#tScore");
+const rightCurrentScore = document.querySelector("#cScore");
+
+// Player Turn
+let currentPlayer = "first";
+
+function firstPlayer() {
+    rollDice1.addEventListener("click", handleFirstPlayer);
+    rollDice2.removeEventListener("click", handleSecondPlayer); // Ensure second player can't roll during first player's turn
+}
+
+function secondPlayer() {
+    rollDice2.addEventListener("click", handleSecondPlayer);
+    rollDice1.removeEventListener("click", handleFirstPlayer); // Ensure first player can't roll during second player's turn
+}
+
+function handleFirstPlayer() {
+    // Hide all images first
+    hideAllImages();
+
+    //color change background
+    left.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
+    right.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+
+    // Generate a random number between 1 and 6
+    const randomNumber = Math.floor(Math.random() * 6) + 1;
+
+    // Display the corresponding image and update the current score
+    if (randomNumber == 1) {
+        img1.style.display = "block";
+        leftCurrentScore.innerHTML = 0;
+        leftTotalScore.innerHTML=0;
+        currentPlayer = "second";
+        hold.disabled = true;
+        secondPlayer();
+        // alert("Player changed to second player.");
+    } else {
+        updateScore(randomNumber, leftCurrentScore, leftTotalScore);
+    }
+}
+
+function handleSecondPlayer() {
+    // Hide all images first
+    hideAllImages();
+
+    //color change background
+    right.style.backgroundColor = "rgba(255, 255, 255, 0.6)";
+    left.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+
+    // Generate a random number between 1 and 6
+    const randomNumber = Math.floor(Math.random() * 6) + 1;
+
+    // Display the corresponding image and update the current score
+    if (randomNumber == 1) {
+        img1.style.display = "block";
+        rightCurrentScore.innerHTML = 0;
+        rightTotalScore.innerHTML=0;
+        currentPlayer = "first";
+        hold.disabled = true;
+        firstPlayer();
+        // alert("Player changed to first player.");
+    } else {
+        updateScore(randomNumber, rightCurrentScore, rightTotalScore);
+    }
+}
+
+function updateScore(randomNumber, currentScore, totalScore) {
+    // Update the image and the current score
+    displayImage(randomNumber);
+    currentScore.innerHTML = randomNumber;
+
+    // Add current score to total score
+    const total = parseInt(totalScore.innerHTML) + randomNumber;
+    totalScore.innerHTML = total;
+
+    // Enable the hold button
+    hold.disabled = false;
+
+    // Hold button functionality
+    hold.onclick = () => {
+        if (total >= 100) {
+            alert("Current player wins!");
+            resetGame();
+        } else {
+            switchPlayer();
+        }
+    };
+}
+
+function switchPlayer() {
+    if (currentPlayer === "first") {
+        currentPlayer = "second";
+        secondPlayer();
+    } else {
+        currentPlayer = "first";
+        firstPlayer();
+    }
+}
+
+function displayImage(randomNumber) {
+    hideAllImages();
+    switch (randomNumber) {
+        case 1:
+            img1.style.display = "block";
+            break;
+        case 2:
+            img2.style.display = "block";
+            break;
+        case 3:
+            img3.style.display = "block";
+            break;
+        case 4:
+            img4.style.display = "block";
+            break;
+        case 5:
+            img5.style.display = "block";
+            break;
+        case 6:
+            img6.style.display = "block";
+            break;
+    }
+}
+
+function hideAllImages() {
+    img1.style.display = "none";
+    img2.style.display = "none";
+    img3.style.display = "none";
+    img4.style.display = "none";
+    img5.style.display = "none";
+    img6.style.display = "none";
+}
+
+function resetGame() {
+    leftTotalScore.innerHTML = 0;
+    rightTotalScore.innerHTML = 0;
+    leftCurrentScore.innerHTML = 0;
+    rightCurrentScore.innerHTML = 0;
+    hideAllImages();
+    currentPlayer = "first";
+    firstPlayer();
+}
+
+firstPlayer(); // Start with the first player's turn
